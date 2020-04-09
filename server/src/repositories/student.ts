@@ -5,44 +5,35 @@ import { StudentBasic, UserBasic } from '../../../common/models';
 
 @EntityRepository(Student)
 export class StudentRepository extends AbstractRepository<Student> {
-  public async expel(courseId: number, githubId: string, comment = '') {
+  public async update(
+    courseId: number,
+    githubId: string,
+    data: {
+      isExpelled?: boolean;
+      expellingReason?: string;
+      mentorGithubId?: string | null;
+    },
+  ) {
+    const { mentorGithubId, expellingReason, isExpelled } = data;
     const student = await this.findByGithubId(courseId, githubId);
     if (student == null) {
       return;
     }
-    await getRepository(Student).update(student.id, {
-      mentorId: null,
-      isExpelled: true,
-      expellingReason: comment || '',
-      endDate: new Date(),
-    });
-  }
 
-  public async restore(courseId: number, githubId: string) {
-    const student = await this.findByGithubId(courseId, githubId);
-    if (student == null) {
-      return;
-    }
-    await getRepository(Student).update(student.id, {
-      isExpelled: false,
-      expellingReason: '',
-      endDate: null,
-    });
-  }
-
-  public async setMentor(courseId: number, studentGithubId: string, mentorGithubId: string | null) {
-    const student = await this.findByGithubId(courseId, studentGithubId);
-    if (student == null) {
-      return;
-    }
-    let mentor: any = null;
-    if (mentorGithubId) {
-      mentor = await courseService.getMentorByGithubId(courseId, mentorGithubId);
-      if (mentor == null) {
-        return;
+    const updatedStudent: Partial<Student> = { id: student.id };
+    if (mentorGithubId !== undefined) {
+      if (mentorGithubId != null) {
+        const mentor = await courseService.getMentorByGithubId(courseId, mentorGithubId);
+        updatedStudent.mentorId = mentor?.id;
+      } else {
+        updatedStudent.mentorId = null;
       }
     }
-    await getRepository(Student).update(student.id, { mentorId: mentor ? mentor.id : null });
+    if (isExpelled !== undefined) {
+      updatedStudent.isExpelled = !!isExpelled;
+      updatedStudent.expellingReason = expellingReason ?? '';
+      updatedStudent.endDate = isExpelled ? new Date() : null;
+    }
   }
 
   public async search(courseId: number, searchText: string): Promise<UserBasic[]> {

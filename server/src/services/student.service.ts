@@ -3,6 +3,15 @@ import { IUserSession } from '../models';
 import { getCustomRepository } from 'typeorm';
 import { StageInterviewRepository } from '../repositories/stageInterview';
 
+
+export class StudentService {
+  constructor(private courseId: number, private githubId: string){}
+
+  getSimple() {
+    return courseService.queryStudentByGithubId(this.courseId, this.githubId)
+  }
+}
+
 export async function canChangeStatus(
   session: IUserSession,
   courseId: number,

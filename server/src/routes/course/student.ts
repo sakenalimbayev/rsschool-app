@@ -20,11 +20,11 @@ export const updateStudentStatus = (_: ILogger) => async (ctx: Router.RouterCont
   const studentRepository = getCustomRepository(StudentRepository);
   switch (data.status) {
     case 'active':
-      await studentRepository.restore(courseId, githubId);
+      await studentRepository.update(courseId, githubId, { isExpelled: false });
       setResponse(ctx, OK);
       break;
     case 'expelled':
-      await studentRepository.expel(courseId, githubId, data.comment);
+      await studentRepository.update(courseId, githubId, { isExpelled: true, expellingReason: data.comment });
       setResponse(ctx, OK);
       break;
     default:
@@ -62,13 +62,13 @@ export const getStudentSummary = (_: ILogger) => async (ctx: Router.RouterContex
 export const updateStudent = (_: ILogger) => async (ctx: Router.RouterContext) => {
   const { courseId, githubId } = ctx.params;
   const student = await courseService.queryStudentByGithubId(courseId, githubId);
-  const data: { mentorGithuId: string | null } = ctx.request.body;
-  if (student == null || data.mentorGithuId === undefined) {
+  const { mentorGithubId }: { mentorGithubId: string | null } = ctx.request.body;
+  if (student == null || mentorGithubId === undefined) {
     setResponse(ctx, BAD_REQUEST, null);
     return;
   }
   const studentRepository = getCustomRepository(StudentRepository);
-  await studentRepository.setMentor(courseId, githubId, data.mentorGithuId);
+  await studentRepository.update(courseId, githubId, { mentorGithubId });
   const updatedStudent = await studentRepository.findAndIncludeMentor(courseId, githubId);
 
   setResponse(ctx, OK, updatedStudent);

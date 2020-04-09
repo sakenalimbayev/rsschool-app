@@ -11,7 +11,7 @@ type State = {
 };
 
 type Props = {
-  mentorGithuId: string;
+  mentorGithubId: string;
   courseId: number;
 };
 
@@ -30,7 +30,7 @@ class AssignStudentModal extends React.PureComponent<Props, State> {
   };
 
   addStudent = async () => {
-    const { mentorGithuId } = this.props;
+    const { mentorGithubId } = this.props;
     const { studentGithubId } = this.state;
 
     if (!studentGithubId) {
@@ -40,7 +40,7 @@ class AssignStudentModal extends React.PureComponent<Props, State> {
     this.reset();
 
     try {
-      await new CourseService(this.props.courseId).updateStudent(studentGithubId, { mentorGithuId });
+      await new CourseService(this.props.courseId).updateStudent(studentGithubId, { mentorGithubId });
       message.success('Success');
     } catch (e) {
       message.error(`${e}`);
@@ -56,7 +56,7 @@ class AssignStudentModal extends React.PureComponent<Props, State> {
   };
 
   render() {
-    const { mentorGithuId, courseId } = this.props;
+    const { mentorGithubId, courseId } = this.props;
     const { isModalOpened } = this.state;
 
     return (
@@ -67,7 +67,7 @@ class AssignStudentModal extends React.PureComponent<Props, State> {
         <Modal
           title={
             <>
-              Assign Student to <Text underline>{mentorGithuId}</Text>
+              Assign Student to <Text underline>{mentorGithubId}</Text>
             </>
           }
           visible={isModalOpened}

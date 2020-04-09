@@ -153,7 +153,7 @@ function Page(props: CoursePageProps) {
                 <Button type="link" onClick={() => handleExpell(mentor)}>
                   Expel
                 </Button>
-                <AssignStudentModal courseId={courseId} mentorGithuId={mentor.githubId} />
+                <AssignStudentModal courseId={courseId} mentorGithubId={mentor.githubId} />
               </>
             ),
           },

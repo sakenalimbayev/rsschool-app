@@ -410,7 +410,7 @@ export class CourseService {
     return result.data.data;
   }
 
-  async updateStudent(githubId: string, data: { mentorGithuId: string | null }) {
+  async updateStudent(githubId: string, data: { mentorGithubId: string | null }) {
     const result = await this.axios.put(`/student/${githubId}`, data);
     return result.data.data as StudentBasic;
   }
