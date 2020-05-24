@@ -10,6 +10,7 @@ WORKDIR /src
 
 COPY package.json /src
 RUN npm install --production --no-optional
+RUN npm run build
 
 COPY public /src/public
 COPY dist /src
