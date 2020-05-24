@@ -10,8 +10,7 @@ WORKDIR /src
 
 COPY package.json /src
 RUN npm install --production --no-optional
-RUN npm install -g typescript
-RUN npm run build
+RUN npm install -g concurrently
 
 COPY public /src/public
 COPY dist /src
